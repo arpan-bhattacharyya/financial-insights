@@ -14,8 +14,6 @@ import plotly.graph_objects as go
 
 
 # Base class for handling financial data
-import csv
-
 class FinancialData:
     def __init__(self, years=0):
         self.years = years
@@ -352,18 +350,28 @@ def main():
                                "Type the serial number: "))
 
             if choice == 1:
-                filename = input("Enter the CSV file name: ")
-                analysis = RatioAnalysis(filename)
-                analysis.perform_ratio_analysis()
+                try:
+                    filename = input("Enter the CSV file name: ")
+                    analysis = RatioAnalysis(filename)
+                    analysis.perform_ratio_analysis()
+                except FileNotFoundError:
+                     print(f"Error: The file '{filename}' was not found. Please check the file name and try again.")
+                except pd.errors.EmptyDataError:
+                    print(f"Error: The file '{filename}' is empty or cannot be read properly. Please check the file content.")
+                except Exception as e:
+                    print(f"An unexpected error occurred: {e}")
 
             elif choice == 2:
-                years = int(input("How many years of data? "))
-                manual_input = FinancialData(years)
-                data = manual_input.input_into_file()
-                if data:
-                    manual_input.save_to_csv()
-                    analysis = RatioAnalysis("income_statements.csv")
-                    analysis.perform_ratio_analysis()
+                try:
+                    years = int(input("How many years of data? "))
+                    manual_input = FinancialData(years)
+                    data = manual_input.input_into_file()
+                    if data:
+                          manual_input.save_to_csv()
+                          analysis = RatioAnalysis("income_statements.csv")
+                          analysis.perform_ratio_analysis()
+                except Exception as e:
+                    print(print(f"An unexpected error occurred: {e}"))
 
             elif choice == 3:
                 def tickering():
@@ -374,30 +382,39 @@ def main():
                     if historical_data is not None:
                         analysis = RatioAnalysis("income_statements_yfinance.csv")
                         analysis.perform_ratio_analysis()
-                a = int(input("Do you need help finding the ticker symbol \n"
+                try:
+                    a = int(input("Do you need help finding the ticker symbol \n"
                                "1. Yes \n"
                                "2. No \n"
                                "Type a serial number: "))
-                if a == 1:
-                    print("We are exiting the program to your default web browser")
-                    url = "https://finance.yahoo.com/lookup/"
-                    webbrowser.open(url)
-                    print("Returning to ticker entry after opening browser...")
-                    tickering()
-                elif a == 2:
-                    tickering()
+                    if a == 1:
+                        print("We are exiting the program to your default web browser")
+                        url = "https://finance.yahoo.com/lookup/"
+                        webbrowser.open(url)
+                        print("Returning to ticker entry after opening browser...")
+                        tickering()
+                    elif a == 2:
+                         tickering()
+                except Exception as e:
+                    print(print(f"An unexpected error occurred: {e}"))
+                    
+                
                     
                           
             
                 
 
             elif choice == 4:
-                ticker = input("Enter the stock ticker symbol: ")
-                period = input("For how many periods i.e  '1y', '2y', '5y', '10y', 'ytd', 'max': ")
-                yahoo_data = YahooFinanceData(ticker)
-                historical_data = yahoo_data.fetch_stock_prices(period=period)
-                if historical_data is not None:
-                    yahoo_data.apply_linear_regression(historical_data)
+                try:
+                    ticker = input("Enter the stock ticker symbol: ")
+                    period = input("For how many periods i.e  '1y', '2y', '5y', '10y', 'ytd', 'max': ")
+                    yahoo_data = YahooFinanceData(ticker)
+                    historical_data = yahoo_data.fetch_stock_prices(period=period)
+                    if historical_data is not None:
+                        yahoo_data.apply_linear_regression(historical_data)
+                except Exception as e:
+                    print(print(f"An unexpected error occurred: {e}"))
+                
 
             elif choice == 5:
                 print("Exiting program.")
